@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Express Movers - Mudanças e Carreto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: #fff;
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease, backdrop-filter 0.3s ease;
+            /* Adicionada transição */
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c5aa0;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: #2c5aa0;
+        }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .mobile-menu span {
+            width: 25px;
+            height: 3px;
+            background: #333;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        /* Banner */
+        .banner {
+            margin-top: 80px;
+            /* Ajuste para a altura do header */
+            height: 70vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('banner_image.png') center/cover;
+            /* Recomendo ter uma imagem de fundo */
+            opacity: 0.3;
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 0 2rem;
+        }
+
+        .banner h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .banner p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .cta-button {
+            background: #ff6b35;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        .cta-button:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 5rem 0;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #2c5aa0;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #2c5aa0;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .service-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Why Choose Us */
+        .why-choose {
+            padding: 5rem 0;
+            background: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #ff6b35;
+            margin-bottom: 1rem;
+        }
+
+        .feature-item h4 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        /* Quote Form */
+        .quote-section {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #2c5aa0 0%, #667eea 100%);
+            color: white;
+        }
+
+        .quote-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        /* Adicione este novo estilo para campos inválidos */
+        .form-group input.invalid,
+        .form-group select.invalid,
+        .form-group textarea.invalid {
+            border: 2px solid #e74c3c;
+            /* Vermelho para erro */
+            background-color: #fbecec;
+            /* Fundo levemente rosado para mais destaque */
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: #ff6b35;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+        }
+
+        .form-feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            /* Hidden by default */
+        }
+
+        .form-feedback.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .form-feedback.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Footer */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #ff6b35;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            line-height: 1.8;
+        }
+
+        .footer-section a:hover {
+            color: #ff6b35;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #555;
+            color: #999;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (min-width: 992px) {
+            .quote-form {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+
+            .form-group:first-of-type {
+                grid-column: span 2;
+            }
+
+            .form-group-last {
+                grid-column: span 2;
+            }
+
+            .submit-btn {
+                grid-column: span 2;
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 1rem 2rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .mobile-menu {
+                display: flex;
+            }
+
+            .banner h1 {
+                font-size: 2.5rem;
+            }
+
+            .banner p {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .services-grid,
+            .features-grid,
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-container,
+            .container {
+                padding: 0 1rem;
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">Express Movers</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#home">Início</a></li>
+                    <li><a href="#services">Serviços</a></li>
+                    <li><a href="#why-choose">Por que Escolher</a></li>
+                    <li><a href="#quote">Orçamento</a></li>
+                    <li><a href="#contact">Contato</a></li>
+                </ul>
+                <div class="mobile-menu" onclick="toggleMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section id="home" class="banner">
+        <div class="banner-content">
+            <h1>Mudanças e Carreto</h1>
+            <p>Sua mudança com segurança, agilidade e o melhor preço da região</p>
+            <a href="#quote" class="cta-button">Solicite seu Orçamento</a>
+        </div>
+    </section>
+
+    <section id="services" class="services">
+        <div class="container">
+            <h2 class="section-title">Nossos Serviços</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🚚</div>
+                    <h3>Mudanças Residenciais</h3>
+                    <p>Mudanças completas para residências com equipe especializada e materiais de proteção para seus
+                        móveis e objetos pessoais.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🏢</div>
+                    <h3>Mudanças Comerciais</h3>
+                    <p>Transferência de escritórios e estabelecimentos comerciais com planejamento estratégico para
+                        minimizar o tempo de inatividade.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📦</div>
+                    <h3>Carreto e Frete</h3>
+                    <p>Transporte de cargas diversas, móveis avulsos e mercadorias com veículos adequados para cada tipo
+                        de carga.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🛡️</div>
+                    <h3>Embalagem e Proteção</h3>
+                    <p>Serviço completo de embalagem com materiais de qualidade para garantir a integridade de seus
+                        pertences.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🏠</div>
+                    <h3>Montagem e Desmontagem</h3>
+                    <p>Desmontagem e montagem de móveis realizada por profissionais experientes com ferramentas
+                        adequadas.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📍</div>
+                    <h3>Mudanças Interestaduais</h3>
+                    <p>Mudanças para outras cidades e estados com acompanhamento completo e seguro durante todo o
+                        trajeto.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="why-choose" class="why-choose">
+        <div class="container">
+            <h2 class="section-title">Por que Escolher a Express Movers?</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🛡️</div>
+                    <h4>Seguro Total</h4>
+                    <p>Todos os nossos serviços são cobertos por seguro, garantindo tranquilidade total para você.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">👥</div>
+                    <h4>Equipe Qualificada</h4>
+                    <p>Profissionais treinados e experientes para manusear seus pertences com o máximo cuidado.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💰</div>
+                    <h4>Preços Competitivos</h4>
+                    <p>Os melhores preços da região sem abrir mão da qualidade e segurança do serviço.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🚚</div>
+                    <h4>Frota Moderna</h4>
+                    <p>Veículos novos e bem conservados, equipados com sistemas de proteção para suas cargas.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📞</div>
+                    <h4>Atendimento 24h</h4>
+                    <p>Suporte completo antes, durante e após o serviço. Estamos sempre disponíveis para você.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quote" class="quote-section">
+        <div class="container">
+            <h2 class="section-title" style="color:#fff;">Solicite seu Orçamento</h2>
+            <form class="quote-form" onsubmit="sendToWhatsApp(event)">
+                <div class="form-group">
+                    <label for="name">Nome Completo:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Telefone:</label>
+                    <input type="tel" id="phone" name="phone" placeholder="(XX) XXXXX-XXXX" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="origin">Endereço de Origem:</label>
+                    <input type="text" id="origin" name="origin" required>
+                </div>
+                <div class="form-group">
+                    <label for="destination">Endereço de Destino:</label>
+                    <input type="text" id="destination" name="destination" required>
+                </div>
+                <div class="form-group">
+                    <label for="service">Tipo de Serviço:</label>
+                    <select id="service" name="service" required>
+                        <option value="">Selecione o serviço</option>
+                        <option value="mudanca-residencial">Mudança Residencial</option>
+                        <option value="mudanca-comercial">Mudança Comercial</option>
+                        <option value="carreto-frete">Carreto e Frete</option>
+                        <option value="mudanca-interestadual">Mudança Interestadual</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date">Data Preferencial:</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+                <div class="form-group form-group-last">
+                    <label for="details">Detalhes Adicionais:</label>
+                    <textarea id="details" name="details"
+                        placeholder="Descreva detalhes sobre a mudança, quantidade de móveis, necessidades especiais, etc."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Enviar Orçamento via WhatsApp</button>
+                <div id="formFeedback" class="form-feedback"></div>
+            </form>
+        </div>
+    </section>
+
+    <footer id="contact" class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Express Movers</h3>
+                    <p>Sua mudança com segurança, agilidade e o melhor preço da região. Atendemos toda a Grande São
+                        Paulo e interior.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Contato</h3>
+                    <p>📞 (11) 99999-9999</p>
+                    <p>📧 contato@expressmovers.com.br</p>
+                    <p>📍 São Paulo - SP</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Horário de Atendimento</h3>
+                    <p>Segunda a Sexta: 7h às 18h</p>
+                    <p>Sábado: 7h às 14h</p>
+                    <p>Domingo: Plantão 24h</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Áreas de Atendimento</h3>
+                    <p>São Paulo Capital</p>
+                    <p>Grande São Paulo</p>
+                    <p>Interior de São Paulo</p>
+                    <p>Mudanças Interestaduais</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Express Movers. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- FUNÇÕES GERAIS ---
+
+        // Mobile menu toggle
+        function toggleMenu() {
+            const navMenu = document.querySelector('.nav-menu');
+            navMenu.classList.toggle('active');
+        }
+
+        // Função para exibir feedback do formulário
+        function showFeedback(type, message) {
+            const feedbackElement = document.getElementById('formFeedback');
+            feedbackElement.textContent = message;
+            feedbackElement.className = `form-feedback ${type}`;
+            feedbackElement.style.display = 'block';
+
+            setTimeout(() => {
+                feedbackElement.style.display = 'none';
+            }, 5000);
+        }
+
+        // --- VALIDAÇÃO DO FORMULÁRIO (VERSÃO MELHORADA) ---
+
+        function sendToWhatsApp(event) {
+            event.preventDefault();
+
+            // Seleciona todos os campos do formulário
+            const formFields = {
+                name: document.getElementById('name'),
+                phone: document.getElementById('phone'),
+                email: document.getElementById('email'),
+                origin: document.getElementById('origin'),
+                destination: document.getElementById('destination'),
+                service: document.getElementById('service'),
+                date: document.getElementById('date'),
+                details: document.getElementById('details') // Não é obrigatório, mas selecionamos para limpar o estilo
+            };
+
+            // 1. Limpa os erros de validações anteriores
+            for (const field of Object.values(formFields)) {
+                field.classList.remove('invalid');
+            }
+            let isValid = true;
+
+            // 2. Validação campo a campo
+            // Campos de texto obrigatórios
+            const requiredText = [formFields.name, formFields.origin, formFields.destination];
+            requiredText.forEach(field => {
+                if (field.value.trim() === '') {
+                    isValid = false;
+                    field.classList.add('invalid');
+                }
+            });
+
+            // Campo de seleção obrigatório
+            if (formFields.service.value === '') {
+                isValid = false;
+                formFields.service.classList.add('invalid');
+            }
+
+            // Campo de data obrigatório
+            if (formFields.date.value === '') {
+                isValid = false;
+                formFields.date.classList.add('invalid');
+            }
+
+            // Validação de E-mail
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(formFields.email.value)) {
+                isValid = false;
+                formFields.email.classList.add('invalid');
+            }
+
+            // Validação de Telefone
+            const cleanPhone = formFields.phone.value.replace(/\D/g, '');
+            if (cleanPhone.length < 10 || cleanPhone.length > 11) {
+                isValid = false;
+                formFields.phone.classList.add('invalid');
+            }
+
+            // 3. Se o formulário NÃO for válido, exibe o erro e interrompe
+            if (!isValid) {
+                showFeedback('error', 'Por favor, corrija os campos destacados em vermelho.');
+                return;
+            }
+
+            // 4. Se tudo estiver correto, continue com o envio
+            const serviceNames = {
+                'mudanca-residencial': 'Mudança Residencial',
+                'mudanca-comercial': 'Mudança Comercial',
+                'carreto-frete': 'Carreto e Frete',
+                'mudanca-interestadual': 'Mudança Interestadual'
+            };
+            const formattedDate = new Date(formFields.date.value).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+
+            const message = `🚛 *NOVA SOLICITAÇÃO DE ORÇAMENTO* 🚛
+---------------------------------
+*DADOS DO CLIENTE:*
+👤 *Nome:* ${formFields.name.value}
+📞 *Telefone:* ${formFields.phone.value}
+📧 *E-mail:* ${formFields.email.value}
+
+*DETALHES DA MUDANÇA:*
+📍 *Origem:* ${formFields.origin.value}
+🏁 *Destino:* ${formFields.destination.value}
+📦 *Tipo de Serviço:* ${serviceNames[formFields.service.value]}
+🗓️ *Data Preferencial:* ${formattedDate}
+
+*DETALHES ADICIONAIS:*
+${formFields.details.value || 'Nenhuma observação.'}
+---------------------------------
+Mensagem enviada pelo site.`;
+
+            const whatsappNumber = '5511996260103'; // Substitua pelo número real
+            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+            window.open(whatsappURL, '_blank');
+            showFeedback('success', 'Orçamento enviado! Você será redirecionado para o WhatsApp.');
+            event.target.reset();
+        }
+
+
+        // --- EVENT LISTENERS (OUVINTES DE EVENTOS) ---
+
+        // Máscara para o campo de telefone
+        const phoneInput = document.getElementById('phone');
+        phoneInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '').substring(0, 11);
+            let formattedValue = '';
+            if (value.length > 0) {
+                formattedValue = `(${value.substring(0, 2)}`;
+            }
+            if (value.length > 2) {
+                const part1 = value.substring(2, value.length === 11 ? 7 : 6);
+                formattedValue += `) ${part1}`;
+            }
+            if (value.length > 6) {
+                const part2 = value.substring(value.length === 11 ? 7 : 6);
+                formattedValue += `-${part2}`;
+            }
+            e.target.value = formattedValue;
+        });
+
+        // Adiciona um listener para remover o erro assim que o usuário começa a corrigir
+        document.querySelectorAll('.quote-form input, .quote-form select, .quote-form textarea').forEach(field => {
+            field.addEventListener('input', () => {
+                field.classList.remove('invalid');
+            });
+        });
+
+        // Smooth scrolling para os links de navegação
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                document.querySelector('.nav-menu').classList.remove('active');
+            });
+        });
+
+        // Efeito de scroll no header
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            header.style.background = window.scrollY > 50 ? 'rgba(255, 255, 255, 0.95)' : '#fff';
+            header.style.backdropFilter = window.scrollY > 50 ? 'blur(10px)' : 'none';
+        });
+
+        // Animação de elementos ao rolar a página
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.service-card, .feature-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        const style = document.createElement('style');
+        style.innerHTML = `.visible { opacity: 1 !important; transform: translateY(0) !important; }`;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+</html>
