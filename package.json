@@ -10,6 +10,10 @@
   },
   "devDependencies": {
     "sass": "^1.92.1",
-    "vite": "^7.1.2"
+    "sharp": "^0.34.4",
+    "vite": "^7.1.2",
+    "vite-plugin-html": "^3.2.2",
+    "vite-plugin-image-optimizer": "^2.0.2",
+    "vite-plugin-webp-generator": "^0.1.0"
   }
 }
